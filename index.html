@@ -10,7 +10,7 @@
     <!-- Firebase SDK 모듈 로드 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, setDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, setDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDF0uMwfOHqLLWVQYAk8FPDHjnJPsMLceU",
@@ -29,6 +29,7 @@
         window.collection = collection;
         window.addDoc = addDoc;
         window.getDocs = getDocs;
+        window.getDoc = getDoc;
         window.deleteDoc = deleteDoc;
         window.updateDoc = updateDoc;
         window.setDoc = setDoc;
@@ -44,9 +45,14 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type="date"], input[type="datetime-local"] {
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased overflow-x-hidden">
 
     <!-- 상단 헤더 (모바일 한 줄 정렬) -->
     <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
@@ -68,29 +74,29 @@
     </header>
 
     <!-- 메인 컨테이너 -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-3 sm:px-4 py-4 space-y-6">
+    <main class="flex-grow max-w-4xl w-full mx-auto px-3 sm:px-4 py-4 space-y-6 min-w-0">
         
         <!-- [1] 사용자 페이지 (신청서 작성) -->
-        <div id="user-page" class="space-y-6">
+        <div id="user-page" class="space-y-6 min-w-0">
             <!-- 상/하반기 신청 마감 안내 배너 -->
-            <div id="period-status-banner" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-3.5 space-y-1.5">
+            <div id="period-status-banner" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-3.5 space-y-1.5 min-w-0">
                 <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800 min-w-0">
                         <span id="period-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
-                        <span id="period-status-text">출타 신청 접수 상태 확인 중...</span>
+                        <span id="period-status-text" class="truncate">출타 신청 접수 상태 확인 중...</span>
                     </div>
                     <span id="period-badge-text" class="text-[11px] font-bold text-slate-500 shrink-0"></span>
                 </div>
-                <div id="period-detail-lines" class="text-[11px] text-slate-500 pl-4 space-y-0.5"></div>
+                <div id="period-detail-lines" class="text-[11px] text-slate-500 pl-4 space-y-0.5 break-all"></div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7 min-w-0">
                 <div class="border-b border-slate-100 pb-3 mb-5">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900">출타 신청서 작성</h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1">휴가, 외출, 외박, 면회 신청을 위한 양식입니다. 신청 즉시 실시간 반영됩니다.</p>
                 </div>
                 
-                <form id="leave-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <form id="leave-form" onsubmit="handleFormSubmit(event)" class="space-y-4 min-w-0">
                     <div class="space-y-1">
                         <label class="block text-xs font-bold text-slate-700">성명</label>
                         <input type="text" id="soldier-name" oninput="saveDraftForm()" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
@@ -116,7 +122,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="space-y-1">
+                        <div class="space-y-1 min-w-0">
                             <label class="block text-xs font-bold text-slate-700">출타 구분</label>
                             <select id="leave-type" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" onchange="onLeaveTypeChange()">
                                 <option value="">선택하세요</option>
@@ -126,7 +132,7 @@
                                 <option value="면회">면회</option>
                             </select>
                         </div>
-                        <div id="sub-type-container" class="hidden space-y-1">
+                        <div id="sub-type-container" class="hidden space-y-1 min-w-0">
                             <label class="block text-xs font-bold text-slate-700">세부 구분</label>
                             <select id="sub-leave-type" onchange="onSubLeaveTypeChange()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-amber-50/50 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
                         </div>
@@ -144,19 +150,19 @@
                     </div>
 
                     <!-- 시작일 / 종료일 -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="space-y-1">
+                    <div class="grid grid-cols-2 gap-2.5 min-w-0">
+                        <div class="space-y-1 min-w-0">
                             <label id="start-date-label" class="block text-xs font-bold text-slate-700">출발일 (시작일)</label>
-                            <input type="date" id="start-date" onchange="handleStartDateChange()" required class="w-full max-w-[155px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="date" id="start-date" onchange="handleStartDateChange()" required class="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-                        <div id="end-date-container" class="space-y-1">
+                        <div id="end-date-container" class="space-y-1 min-w-0">
                             <label id="end-date-label" class="block text-xs font-bold text-slate-700">종료일</label>
-                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full max-w-[155px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                     </div>
 
                     <!-- TMO 선택 (휴가 및 신병위로외박 전용) -->
-                    <div id="tmo-section" class="hidden p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2.5">
+                    <div id="tmo-section" class="hidden p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2.5 min-w-0">
                         <p class="text-xs font-bold text-rose-600">※ 연가 미소진 시에만 가능</p>
                         <div class="flex items-center gap-4 text-xs font-semibold">
                             <span class="text-slate-700 font-bold">TMO 신청:</span>
@@ -168,20 +174,20 @@
                             </label>
                         </div>
                         <div id="tmo-routes" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5">
+                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5 min-w-0">
                                 <p class="text-[11px] font-bold text-blue-800">출발일 구간</p>
                                 <div class="flex items-center gap-1.5">
-                                    <input type="text" id="tmo-start-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
-                                    <span class="text-xs font-bold text-slate-400">→</span>
-                                    <input type="text" id="tmo-start-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <input type="text" id="tmo-start-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full min-w-0 px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <span class="text-xs font-bold text-slate-400 shrink-0">→</span>
+                                    <input type="text" id="tmo-start-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full min-w-0 px-2 py-1 border border-slate-300 rounded text-xs">
                                 </div>
                             </div>
-                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5">
+                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5 min-w-0">
                                 <p class="text-[11px] font-bold text-blue-800">도착(복귀)일 구간</p>
                                 <div class="flex items-center gap-1.5">
-                                    <input type="text" id="tmo-end-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
-                                    <span class="text-xs font-bold text-slate-400">→</span>
-                                    <input type="text" id="tmo-end-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <input type="text" id="tmo-end-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full min-w-0 px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <span class="text-xs font-bold text-slate-400 shrink-0">→</span>
+                                    <input type="text" id="tmo-end-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full min-w-0 px-2 py-1 border border-slate-300 rounded text-xs">
                                 </div>
                             </div>
                         </div>
@@ -194,7 +200,7 @@
                     </div>
 
                     <!-- 전우조 동행 섹션 -->
-                    <div id="buddy-section" class="hidden p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <div id="buddy-section" class="hidden p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3 min-w-0">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-slate-700"><i class="fa-solid fa-users text-emerald-600"></i> 전우조 동행인원 입력</h3>
                             <button type="button" onclick="addBuddyField()" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs font-semibold">+ 추가</button>
@@ -203,7 +209,7 @@
                     </div>
 
                     <!-- 면회객 정보 섹션 -->
-                    <div id="visitor-section" class="hidden p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <div id="visitor-section" class="hidden p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3 min-w-0">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-slate-700"><i class="fa-solid fa-user-group text-emerald-600"></i> 면회객 정보 입력</h3>
                             <button type="button" id="add-visitor-btn" onclick="addVisitorField()" class="bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-xs font-semibold">+ 추가</button>
@@ -219,8 +225,8 @@
         </div>
 
         <!-- [2] 관리자 전용 페이지 -->
-        <div id="admin-page" class="hidden space-y-5">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5">
+        <div id="admin-page" class="hidden space-y-5 min-w-0">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 min-w-0">
                 <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved text-emerald-600"></i> 관리자 페이지
                 </h2>
@@ -238,29 +244,29 @@
             </div>
 
             <!-- TAB A: 부대 정원 및 설정 -->
-            <div id="admin-subtab-settings" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 space-y-5">
+            <div id="admin-subtab-settings" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 sm:p-6 space-y-5 min-w-0">
                 <!-- 출발일 기준 상반기(1~18일) / 하반기(19~말일) 마감일 설정 -->
-                <div class="p-4 bg-amber-50/70 rounded-xl border border-amber-200 space-y-3">
+                <div class="p-3.5 sm:p-4 bg-amber-50/70 rounded-xl border border-amber-200 space-y-3 min-w-0 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
-                        <h3 class="text-sm font-bold text-amber-950">출발일 기준 상반기(1~18일) / 하반기(19~말일) 마감일</h3>
-                        <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
+                        <h3 class="text-xs sm:text-sm font-bold text-amber-950 leading-snug">출발일 기준 상반기(1~18일) / 하반기(19~말일) 마감일</h3>
+                        <label class="flex items-center gap-1 text-xs font-bold text-slate-700 cursor-pointer shrink-0">
                             <input type="checkbox" id="set-deadline-enabled" onchange="toggleDeadlineInputs()"> 마감일 제한 적용
                         </label>
                     </div>
                     <p class="text-[11px] text-slate-600">출발일이 매월 1~18일이면 상반기 마감일, 출발일이 19~말일(예: 31일)이면 하반기 마감일을 적용합니다.</p>
-                    <div id="deadline-inputs-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1">
+                    <div id="deadline-inputs-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 min-w-0">
+                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
                             <label class="block text-xs font-bold text-emerald-800">상반기 출발 (매월 1~18일) 마감일시</label>
-                            <input type="datetime-local" id="set-first-half-deadline" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                            <input type="datetime-local" id="set-first-half-deadline" class="w-full max-w-full min-w-0 px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1">
+                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
                             <label class="block text-xs font-bold text-blue-800">하반기 출발 (매월 19~말일) 마감일시</label>
-                            <input type="datetime-local" id="set-second-half-deadline" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                            <input type="datetime-local" id="set-second-half-deadline" class="w-full max-w-full min-w-0 px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-4 min-w-0">
                     <h3 class="text-sm sm:text-base font-bold text-slate-900">부대 정원 및 출타율 한도 설정 (서버 동기화)</h3>
                     <div class="space-y-3">
                         <div>
@@ -283,7 +289,7 @@
 
                 <hr class="border-slate-100">
 
-                <div class="space-y-3">
+                <div class="space-y-3 min-w-0">
                     <h3 class="text-sm sm:text-base font-bold text-slate-900">관리자 비밀번호 변경</h3>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1">새로운 비밀번호 입력</label>
@@ -296,8 +302,8 @@
             </div>
 
             <!-- TAB B: 출타자 정보 복사 (10개 세부 카테고리 + 동일인 묶음 정렬) -->
-            <div id="admin-subtab-copy" class="hidden space-y-4">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3">
+            <div id="admin-subtab-copy" class="hidden space-y-4 min-w-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3 min-w-0">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <div class="flex items-center gap-1.5">
                             <button onclick="changeAdminCopyMonth(-1)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
@@ -324,7 +330,7 @@
                 <!-- 10개 세부 카테고리 탭 -->
                 <div id="copy-category-tabs" class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1.5 rounded-xl"></div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3 min-w-0">
                     <div class="flex justify-between items-center">
                         <h4 id="category-copy-title" class="text-sm font-bold text-slate-900">[휴가] 복사 양식</h4>
                         <button onclick="copyCurrentCategoryText()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
@@ -346,8 +352,8 @@
             totalRate: 20,
             vacationRate: 15,
             deadlineEnabled: false,
-            firstHalfDeadline: '',  // 출발일 1~18일(상반기) 출타 신청 마감일시
-            secondHalfDeadline: ''  // 출발일 19~말일(하반기) 출타 신청 마감일시
+            firstHalfDeadline: '',
+            secondHalfDeadline: ''
         };
         let adminPassword = localStorage.getItem('chulta_admin_pw') || '1234';
         let leaves = [];
@@ -382,7 +388,66 @@
             syncSettingsInputs();
             updatePeriodBannerUI();
             loadDraftForm();
+            refreshLatestServerData();
         };
+
+        // 카톡 인앱 브라우저 등에서 화면 재진입 시 최신 서버 데이터 즉시 동기화
+        async function refreshLatestServerData() {
+            if (!window.db || !window.getDoc || !window.getDocs) return;
+            try {
+                const settingsSnap = await window.getDoc(window.doc(window.db, "config", "settings"));
+                if (settingsSnap.exists()) {
+                    applySettingsObject(settingsSnap.data());
+                }
+                const leavesSnap = await window.getDocs(window.collection(window.db, "leaves"));
+                const loaded = [];
+                leavesSnap.forEach((docSnap) => {
+                    loaded.push({ firebaseId: docSnap.id, ...docSnap.data() });
+                });
+                leaves = loaded;
+                recalculateCapacities();
+                if (isAdmin) {
+                    renderCopyCategoryTabs();
+                    generateCategoryCopyTexts();
+                }
+                if (document.getElementById('cal-grid')) {
+                    renderCalendarGrid();
+                }
+                if (currentOpenDetailDate && document.getElementById('sub-modal')) {
+                    openDayDetailModal(currentOpenDetailDate);
+                }
+            } catch (err) {
+                console.warn("최신 서버 데이터 조회 재시도 대기:", err);
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                refreshLatestServerData();
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            refreshLatestServerData();
+        });
+        window.addEventListener('focus', () => {
+            refreshLatestServerData();
+        });
+
+        function applySettingsObject(data) {
+            if (!data) return;
+            if (data.totalTroops !== undefined) settings.totalTroops = data.totalTroops;
+            if (data.totalRate !== undefined) settings.totalRate = data.totalRate;
+            if (data.vacationRate !== undefined) settings.vacationRate = data.vacationRate;
+            if (data.deadlineEnabled !== undefined) settings.deadlineEnabled = data.deadlineEnabled;
+            if (data.firstHalfDeadline !== undefined) settings.firstHalfDeadline = data.firstHalfDeadline;
+            if (data.secondHalfDeadline !== undefined) settings.secondHalfDeadline = data.secondHalfDeadline;
+            if (data.adminPassword !== undefined) {
+                adminPassword = data.adminPassword;
+                localStorage.setItem('chulta_admin_pw', adminPassword);
+            }
+            syncSettingsInputs();
+            updatePeriodBannerUI();
+        }
 
         function initDates() {
             const today = new Date().toISOString().split('T')[0];
@@ -550,20 +615,7 @@
             const settingsDocRef = window.doc(window.db, "config", "settings");
             window.onSnapshot(settingsDocRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.totalTroops !== undefined) settings.totalTroops = data.totalTroops;
-                    if (data.totalRate !== undefined) settings.totalRate = data.totalRate;
-                    if (data.vacationRate !== undefined) settings.vacationRate = data.vacationRate;
-                    if (data.deadlineEnabled !== undefined) settings.deadlineEnabled = data.deadlineEnabled;
-                    if (data.firstHalfDeadline !== undefined) settings.firstHalfDeadline = data.firstHalfDeadline;
-                    if (data.secondHalfDeadline !== undefined) settings.secondHalfDeadline = data.secondHalfDeadline;
-                    if (data.adminPassword !== undefined) {
-                        adminPassword = data.adminPassword;
-                        localStorage.setItem('chulta_admin_pw', adminPassword);
-                    }
-
-                    syncSettingsInputs();
-                    updatePeriodBannerUI();
+                    applySettingsObject(docSnap.data());
                     recalculateCapacities();
                     if (isAdmin) {
                         generateCategoryCopyTexts();
@@ -586,6 +638,7 @@
                 
                 recalculateCapacities();
                 if (isAdmin) {
+                    renderCopyCategoryTabs();
                     generateCategoryCopyTexts();
                 }
                 if (document.getElementById('cal-grid')) {
@@ -972,6 +1025,7 @@
         let calMonth = new Date().getMonth();
 
         function showPublicCalendar() {
+            refreshLatestServerData();
             let html = `
                 <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 sm:p-4">
                     <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-5 space-y-3.5 shadow-2xl max-h-[92vh] flex flex-col">
@@ -1353,6 +1407,16 @@
 
         async function handleFormSubmit(e) {
             e.preventDefault();
+
+            // 제출 직전 최신 서버 설정 동기화
+            if (window.db && window.getDoc) {
+                try {
+                    const snap = await window.getDoc(window.doc(window.db, "config", "settings"));
+                    if (snap.exists()) applySettingsObject(snap.data());
+                } catch (err) {
+                    console.warn("제출 전 설정 재조회 실패:", err);
+                }
+            }
 
             const type = document.getElementById('leave-type').value;
             const subType = document.getElementById('sub-leave-type').value || '';
