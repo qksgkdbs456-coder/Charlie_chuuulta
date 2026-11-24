@@ -46,9 +46,13 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         input[type="date"], input[type="datetime-local"] {
+            display: block;
+            width: 100%;
             max-width: 100%;
             min-width: 0;
             box-sizing: border-box;
+            -webkit-appearance: none;
+            appearance: none;
         }
     </style>
 </head>
@@ -150,14 +154,14 @@
                     </div>
 
                     <!-- 시작일 / 종료일 -->
-                    <div class="grid grid-cols-2 gap-2.5 min-w-0">
-                        <div class="space-y-1 min-w-0">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0">
+                        <div class="space-y-1 min-w-0 overflow-hidden">
                             <label id="start-date-label" class="block text-xs font-bold text-slate-700">출발일 (시작일)</label>
-                            <input type="date" id="start-date" onchange="handleStartDateChange()" required class="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="date" id="start-date" onchange="handleStartDateChange()" required class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-                        <div id="end-date-container" class="space-y-1 min-w-0">
+                        <div id="end-date-container" class="space-y-1 min-w-0 overflow-hidden">
                             <label id="end-date-label" class="block text-xs font-bold text-slate-700">종료일</label>
-                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full px-2 py-1.5 border border-slate-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full px-2.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                     </div>
 
@@ -230,7 +234,7 @@
                 <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved text-emerald-600"></i> 관리자 페이지
                 </h2>
-                <p class="text-xs text-slate-500 mt-1">부대 정원·출발일 기준 상/하반기 마감일 설정, 비밀번호 변경 및 카테고리별 독립 복사 양식을 관리합니다. (달력에서 출타자 클릭 시 삭제 가능)</p>
+                <p class="text-xs text-slate-500 mt-1">부대 정원·출발일 기준 상/하반기 마감일 설정, 비밀번호 변경 및 카테고리별 독립 복사 양식을 관리합니다. (달력에서 출타자 선택 시 최강 지정·해제 및 삭제 가능)</p>
             </div>
 
             <!-- 관리자 기능 전환 탭 버튼 -->
@@ -246,7 +250,7 @@
             <!-- TAB A: 부대 정원 및 설정 -->
             <div id="admin-subtab-settings" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 sm:p-6 space-y-5 min-w-0">
                 <!-- 출발일 기준 상반기(1~18일) / 하반기(19~말일) 마감일 설정 -->
-                <div class="p-3.5 sm:p-4 bg-amber-50/70 rounded-xl border border-amber-200 space-y-3 min-w-0 overflow-hidden">
+                <div class="p-3 sm:p-4 bg-amber-50/70 rounded-xl border border-amber-200 space-y-3 min-w-0 overflow-hidden">
                     <div class="flex items-center justify-between gap-2">
                         <h3 class="text-xs sm:text-sm font-bold text-amber-950 leading-snug">출발일 기준 상반기(1~18일) / 하반기(19~말일) 마감일</h3>
                         <label class="flex items-center gap-1 text-xs font-bold text-slate-700 cursor-pointer shrink-0">
@@ -254,14 +258,14 @@
                         </label>
                     </div>
                     <p class="text-[11px] text-slate-600">출발일이 매월 1~18일이면 상반기 마감일, 출발일이 19~말일(예: 31일)이면 하반기 마감일을 적용합니다.</p>
-                    <div id="deadline-inputs-box" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 min-w-0">
-                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
+                    <div id="deadline-inputs-box" class="space-y-2.5 pt-1 min-w-0">
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
                             <label class="block text-xs font-bold text-emerald-800">상반기 출발 (매월 1~18일) 마감일시</label>
-                            <input type="datetime-local" id="set-first-half-deadline" class="w-full max-w-full min-w-0 px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                            <input type="datetime-local" id="set-first-half-deadline" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg text-[11px] sm:text-xs bg-white">
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200/80 space-y-1 min-w-0 overflow-hidden">
                             <label class="block text-xs font-bold text-blue-800">하반기 출발 (매월 19~말일) 마감일시</label>
-                            <input type="datetime-local" id="set-second-half-deadline" class="w-full max-w-full min-w-0 px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
+                            <input type="datetime-local" id="set-second-half-deadline" class="w-full px-2 py-1.5 border border-slate-300 rounded-lg text-[11px] sm:text-xs bg-white">
                         </div>
                     </div>
                 </div>
@@ -1127,6 +1131,7 @@
                     name: l.name,
                     type: l.subType || l.type,
                     status: l.status,
+                    priorityStrong: !!l.priorityStrong,
                     startDate: l.startDate,
                     endDate: l.endDate,
                     isBuddy: false,
@@ -1142,6 +1147,7 @@
                                 name: b.name,
                                 type: l.subType || l.type,
                                 status: l.status,
+                                priorityStrong: !!l.priorityStrong,
                                 startDate: l.startDate,
                                 endDate: l.endDate,
                                 isBuddy: true,
@@ -1158,22 +1164,37 @@
             } else {
                 listHtml = expandedItems.map(item => {
                     const isStandby = item.status === '대기(초과)';
-                    const adminClickAttr = isAdmin 
-                        ? `onclick="handleAdminDeletePerson('${item.firebaseId}', ${item.isBuddy}, ${item.buddyIndex}, '${item.rank} ${item.name}')"` 
+                    const isStrong = item.priorityStrong;
+
+                    const adminStrongBtn = isAdmin
+                        ? `<button type="button" onclick="event.stopPropagation(); togglePriorityStrong('${item.firebaseId}', ${!isStrong}, '${item.rank} ${item.name}')"
+                            class="px-2 py-0.5 rounded text-[10px] font-bold transition ${isStrong ? 'bg-amber-500 text-white hover:bg-amber-600' : 'bg-slate-200 text-slate-700 hover:bg-amber-100 hover:text-amber-800'}">
+                            ${isStrong ? '★ 최강 해제' : '최강 지정'}
+                           </button>`
                         : '';
-                    const adminHoverClass = isAdmin ? 'cursor-pointer hover:border-red-400 hover:bg-red-50/40 transition' : '';
+
+                    const adminDeleteBtn = isAdmin
+                        ? `<button type="button" onclick="event.stopPropagation(); handleAdminDeletePerson('${item.firebaseId}', ${item.isBuddy}, ${item.buddyIndex}, '${item.rank} ${item.name}')"
+                            class="text-red-500 hover:text-red-700 px-1.5 py-0.5" title="삭제">
+                            <i class="fa-solid fa-trash-can"></i>
+                           </button>`
+                        : '';
 
                     return `
-                        <div ${adminClickAttr} class="p-2.5 rounded-xl border ${isStandby ? 'bg-red-50/70 border-red-200' : 'bg-slate-50 border-slate-200'} ${adminHoverClass} flex justify-between items-center text-xs">
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="font-bold ${isStandby ? 'text-red-700' : 'text-slate-900'}">${item.rank} ${item.name}</span>
-                                <span class="text-slate-500 font-medium">(${item.type})</span>
-                                ${isStandby ? '<span class="bg-red-100 text-red-700 text-[10px] px-1.5 py-0.5 rounded font-bold">초과대기</span>' : ''}
+                        <div class="p-2.5 rounded-xl border ${isStandby ? 'bg-red-50/70 border-red-200' : (isStrong ? 'bg-amber-50/60 border-amber-300' : 'bg-slate-50 border-slate-200')} flex flex-col gap-1.5 text-xs">
+                            <div class="flex justify-between items-center gap-2">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold ${isStandby ? 'text-red-700' : 'text-slate-900'}">${item.rank} ${item.name}</span>
+                                    <span class="text-slate-500 font-medium">(${item.type})</span>
+                                    ${isStrong ? '<span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-bold">★ 최강</span>' : ''}
+                                    ${isStandby ? '<span class="bg-red-100 text-red-700 text-[10px] px-1.5 py-0.5 rounded font-bold">초과대기</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    ${adminStrongBtn}
+                                    ${adminDeleteBtn}
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span class="text-[11px] text-slate-500">${item.startDate} ~ ${item.endDate}</span>
-                                ${isAdmin ? '<span class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash-can"></i></span>' : ''}
-                            </div>
+                            <div class="text-[11px] text-slate-500">${item.startDate} ~ ${item.endDate}</div>
                         </div>
                     `;
                 }).join('');
@@ -1187,9 +1208,9 @@
                     <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-xl">
                         <div class="border-b border-slate-100 pb-2 flex justify-between items-center">
                             <h4 class="font-bold text-slate-900 text-sm">${dStr} 출타자 명단 (${expandedItems.length}명)</h4>
-                            ${isAdmin ? '<span class="text-[11px] font-bold text-red-500">이름 터치 시 삭제</span>' : ''}
+                            ${isAdmin ? '<span class="text-[11px] font-bold text-amber-600">관리자 제어 활성</span>' : ''}
                         </div>
-                        <div class="max-h-64 overflow-y-auto space-y-2">
+                        <div class="max-h-72 overflow-y-auto space-y-2">
                             ${listHtml}
                         </div>
                         <button onclick="closeSubModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-xl text-xs font-bold">닫기</button>
@@ -1200,6 +1221,24 @@
             div.id = 'sub-modal';
             div.innerHTML = html;
             document.body.appendChild(div);
+        }
+
+        // 관리자 전용: 출타율 최강 지정 및 해제
+        async function togglePriorityStrong(firebaseId, nextValue, personLabel) {
+            if (!isAdmin) return;
+            try {
+                await window.updateDoc(window.doc(window.db, "leaves", firebaseId), {
+                    priorityStrong: nextValue
+                });
+                const target = leaves.find(l => l.firebaseId === firebaseId);
+                if (target) target.priorityStrong = nextValue;
+                recalculateCapacities();
+                if (document.getElementById('cal-grid')) renderCalendarGrid();
+                if (currentOpenDetailDate) openDayDetailModal(currentOpenDetailDate);
+            } catch (err) {
+                console.error("출타율 최강 변경 오류:", err);
+                alert("우선순위 변경 중 오류가 발생했습니다.");
+            }
         }
 
         async function handleAdminDeletePerson(firebaseId, isBuddy, buddyIndex, personLabel) {
@@ -1461,6 +1500,7 @@
                 tmoEndTo: document.getElementById('tmo-end-to').value.trim(),
                 reason: rawReason,
                 status: '승인',
+                priorityStrong: false,
                 buddies: [],
                 visitors: []
             };
@@ -1512,7 +1552,7 @@
             }
         }
 
-        // 출타율 정원 초과 계산
+        // 출타율 정원 초과 계산 (priorityStrong: true 인원은 최우선 순위로 가장 마지막에 대기 전환)
         function recalculateCapacities() {
             leaves.forEach(l => l.status = '승인');
 
@@ -1567,7 +1607,12 @@
 
                 if (candidates.length === 0) break;
 
+                // candidates[0]이 먼저 대기(초과)로 밀리므로, priorityStrong(최강) 인원은 항상 뒤로 정렬하여 끝까지 보호
                 candidates.sort((a, b) => {
+                    const aStrong = a.priorityStrong ? 1 : 0;
+                    const bStrong = b.priorityStrong ? 1 : 0;
+                    if (aStrong !== bStrong) return aStrong - bStrong;
+
                     let aPrevEnd = getLatestPreviousEndDate(a);
                     let bPrevEnd = getLatestPreviousEndDate(b);
                     if (aPrevEnd && bPrevEnd) return bPrevEnd - aPrevEnd;
