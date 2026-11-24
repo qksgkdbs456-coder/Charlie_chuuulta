@@ -72,6 +72,15 @@
         
         <!-- [1] 사용자 페이지 (신청서 작성) -->
         <div id="user-page" class="space-y-6">
+            <!-- 출타 신청 기간 안내 배너 -->
+            <div id="period-status-banner" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-3.5 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800">
+                    <span id="period-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span id="period-status-text">출타 신청 접수 상태 확인 중...</span>
+                </div>
+                <span id="period-range-text" class="text-[11px] text-slate-500 text-right"></span>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
                 <div class="border-b border-slate-100 pb-3 mb-5">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-900">출타 신청서 작성</h2>
@@ -103,19 +112,26 @@
                         <input type="tel" id="soldier-phone" oninput="saveDraftForm()" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="010-0000-0000">
                     </div>
 
-                    <div class="space-y-1">
-                        <label class="block text-xs font-bold text-slate-700">출타 구분</label>
-                        <select id="leave-type" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" onchange="onLeaveTypeChange()">
-                            <option value="">선택하세요</option>
-                            <option value="휴가">휴가</option>
-                            <option value="외출">외출</option>
-                            <option value="외박">외박</option>
-                            <option value="면회">면회</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-slate-700">출타 구분</label>
+                            <select id="leave-type" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" onchange="onLeaveTypeChange()">
+                                <option value="">선택하세요</option>
+                                <option value="휴가">휴가</option>
+                                <option value="외출">외출</option>
+                                <option value="외박">외박</option>
+                                <option value="면회">면회</option>
+                            </select>
+                        </div>
+                        <div id="sub-type-container" class="hidden space-y-1">
+                            <label class="block text-xs font-bold text-slate-700">세부 구분</label>
+                            <select id="sub-leave-type" onchange="onSubLeaveTypeChange()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-amber-50/50 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
+                        </div>
                     </div>
-                    <div class="space-y-1">
+
+                    <div id="destination-container" class="space-y-1">
                         <label class="block text-xs font-bold text-slate-700">행선지</label>
-                        <input type="text" id="destination" oninput="saveDraftForm()" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <input type="text" id="destination" oninput="saveDraftForm()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
 
                     <!-- 외박 숙소 정보 -->
@@ -124,35 +140,60 @@
                         <input type="text" id="accommodation" oninput="saveDraftForm()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="호텔/펜션 이름 등">
                     </div>
 
-                    <!-- 시작일 / 종료일 (칸 너비 축소 디자인으로 겹침 방지) -->
+                    <!-- 시작일 / 종료일 -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1">
-                            <label class="block text-xs font-bold text-slate-700">시작일</label>
-                            <input type="date" id="start-date" onchange="saveDraftForm()" required class="w-full max-w-[150px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <label id="start-date-label" class="block text-xs font-bold text-slate-700">시작일</label>
+                            <input type="date" id="start-date" onchange="handleStartDateChange()" required class="w-full max-w-[155px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-bold text-slate-700">종료일</label>
-                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full max-w-[150px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <div id="end-date-container" class="space-y-1">
+                            <label id="end-date-label" class="block text-xs font-bold text-slate-700">종료일</label>
+                            <input type="date" id="end-date" onchange="saveDraftForm()" required class="w-full max-w-[155px] px-2 py-1.5 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                     </div>
 
-                    <!-- 출타 사유 -->
-                    <div id="reason-container" class="space-y-1">
-                        <label class="block text-xs font-bold text-slate-700">출타 사유</label>
-                        <textarea id="leave-reason" rows="2" oninput="saveDraftForm()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    <!-- 휴가종류 (일반 휴가 전용; 신병위로외박은 숨김) -->
+                    <div id="vacation-kind-container" class="hidden space-y-1">
+                        <label class="block text-xs font-bold text-slate-700">휴가 종류</label>
+                        <input type="text" id="vacation-kind" oninput="saveDraftForm()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="예: 연가 4일, 구직청원 2일">
                     </div>
 
-                    <!-- 외출/외박 동행 형태 라디오 -->
-                    <div id="outing-sub-selector" class="hidden p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <label class="block text-xs font-bold text-slate-700">외출/외박 동행 형태</label>
-                        <div class="flex gap-4 text-xs font-semibold">
+                    <!-- TMO 선택 (휴가 및 신병위로외박 전용) -->
+                    <div id="tmo-section" class="hidden p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2.5">
+                        <p class="text-xs font-bold text-rose-600">※ 연가 미소진 시에만 가능</p>
+                        <div class="flex items-center gap-4 text-xs font-semibold">
+                            <span class="text-slate-700 font-bold">TMO 신청:</span>
                             <label class="flex items-center gap-1.5 cursor-pointer">
-                                <input type="radio" name="outing-sub-type" value="buddy" checked onchange="toggleOutingSubType()"> 전우조 동행
+                                <input type="radio" name="tmo-use" value="N" checked onchange="toggleTmoRoutes()"> N
                             </label>
                             <label class="flex items-center gap-1.5 cursor-pointer">
-                                <input type="radio" name="outing-sub-type" value="visitor" onchange="toggleOutingSubType()"> 면회객 동행
+                                <input type="radio" name="tmo-use" value="Y" onchange="toggleTmoRoutes()"> Y
                             </label>
                         </div>
+                        <div id="tmo-routes" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5">
+                                <p class="text-[11px] font-bold text-blue-800">출발일 구간</p>
+                                <div class="flex items-center gap-1.5">
+                                    <input type="text" id="tmo-start-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <span class="text-xs font-bold text-slate-400">→</span>
+                                    <input type="text" id="tmo-start-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                </div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-blue-200 space-y-1.5">
+                                <p class="text-[11px] font-bold text-blue-800">도착(복귀)일 구간</p>
+                                <div class="flex items-center gap-1.5">
+                                    <input type="text" id="tmo-end-from" oninput="saveDraftForm()" placeholder="출발역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                    <span class="text-xs font-bold text-slate-400">→</span>
+                                    <input type="text" id="tmo-end-to" oninput="saveDraftForm()" placeholder="도착역" class="w-full px-2 py-1 border border-slate-300 rounded text-xs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 출타 사유 (외출/외박 전용; 미입력 시 복사 양식에서 제외) -->
+                    <div id="reason-container" class="hidden space-y-1">
+                        <label class="block text-xs font-bold text-slate-700">사유 <span class="text-slate-400 font-normal">(입력 시 복사 양식 맨 끝에 출력)</span></label>
+                        <textarea id="leave-reason" rows="2" oninput="saveDraftForm()" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="사유 입력 (선택)"></textarea>
                     </div>
 
                     <!-- 전우조 동행 섹션 -->
@@ -173,7 +214,7 @@
                         <div id="visitor-list" class="space-y-2"></div>
                     </div>
 
-                    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow text-sm">
+                    <button type="submit" id="submit-leave-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow text-sm">
                         출타 신청서 제출 (실시간 반영)
                     </button>
                 </form>
@@ -186,7 +227,7 @@
                 <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved text-emerald-600"></i> 관리자 페이지
                 </h2>
-                <p class="text-xs text-slate-500 mt-1">부대 정원 설정, 비밀번호 변경 및 카테고리별 독립 복사 양식을 관리합니다. (달력에서 출타자 클릭 시 삭제 가능)</p>
+                <p class="text-xs text-slate-500 mt-1">부대 정원·신청 기간 설정, 비밀번호 변경 및 카테고리별 독립 복사 양식을 관리합니다. (달력에서 출타자 클릭 시 삭제 가능)</p>
             </div>
 
             <!-- 관리자 기능 전환 탭 버튼 -->
@@ -199,8 +240,31 @@
                 </button>
             </div>
 
-            <!-- TAB A: 부대 정원 및 설정 (비밀번호 변경 포함) -->
+            <!-- TAB A: 부대 정원 및 설정 (신청 기간 제어 & 비밀번호 변경 포함) -->
             <div id="admin-subtab-settings" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 space-y-5">
+                <!-- 출타 신청 접수 기간 제어 -->
+                <div class="p-4 bg-amber-50/70 rounded-xl border border-amber-200 space-y-3">
+                    <h3 class="text-sm font-bold text-amber-950">출타 신청 기간 개폐 (오픈 / 마감)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">접수 상태 모드</label>
+                            <select id="set-period-mode" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold bg-white">
+                                <option value="open">상시 오픈</option>
+                                <option value="auto">지정 기간 내 오픈</option>
+                                <option value="closed">즉시 마감</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">접수 시작 일시</label>
+                            <input type="datetime-local" id="set-period-start" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">접수 마감 일시</label>
+                            <input type="datetime-local" id="set-period-end" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs bg-white">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
                     <h3 class="text-sm sm:text-base font-bold text-slate-900">부대 정원 및 출타율 한도 설정 (서버 동기화)</h3>
                     <div class="space-y-3">
@@ -236,40 +300,34 @@
                 </div>
             </div>
 
-            <!-- TAB B: 출타자 정보 복사 -->
+            <!-- TAB B: 출타자 정보 복사 (10개 세부 카테고리 + 동일인 묶음 정렬) -->
             <div id="admin-subtab-copy" class="hidden space-y-4">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3">
-                    <div class="flex justify-between items-center gap-2">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
                         <div class="flex items-center gap-1.5">
                             <button onclick="changeAdminCopyMonth(-1)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
                                 <i class="fa-solid fa-chevron-left"></i> 이전
                             </button>
-                            <span id="admin-copy-month-label" class="text-sm font-black text-slate-800 px-2 min-w-[100px] text-center">2026년 10월</span>
+                            <span id="admin-copy-month-label" class="text-sm font-black text-slate-800 px-2 min-w-[100px] text-center">2026년 11월</span>
                             <button onclick="changeAdminCopyMonth(1)" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">
                                 다음 <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </div>
-                        <button onclick="toggleAdminCopyAllMonths()" id="admin-copy-all-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold">
-                            전체 기간
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <select id="copy-sort-mode" onchange="generateCategoryCopyTexts()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold bg-white">
+                                <option value="date_grouped">날짜 빠른순 (동일인 묶음)</option>
+                                <option value="name_grouped">이름순 (동일인 묶음)</option>
+                            </select>
+                            <button onclick="toggleAdminCopyAllMonths()" id="admin-copy-all-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold">
+                                전체 기간
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-[11px] text-slate-500">선택된 기간의 신청 내역이 아래 카테고리별 양식에 맞추어 자동으로 생성됩니다.</p>
+                    <p class="text-[11px] text-slate-500">10개 세부 카테고리별 양식이며, 동일 신청자 내역은 한데 모아서 출력됩니다.</p>
                 </div>
 
-                <div class="grid grid-cols-4 gap-1.5 bg-slate-200 p-1 rounded-xl">
-                    <button id="cat-tab-vacation" onclick="switchCategoryCopyTab('vacation')" class="py-2 rounded-lg text-xs font-bold transition bg-white text-emerald-800 shadow-sm">
-                        휴가
-                    </button>
-                    <button id="cat-tab-outing" onclick="switchCategoryCopyTab('outing')" class="py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
-                        외출
-                    </button>
-                    <button id="cat-tab-stay" onclick="switchCategoryCopyTab('stay')" class="py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
-                        외박
-                    </button>
-                    <button id="cat-tab-visit" onclick="switchCategoryCopyTab('visit')" class="py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
-                        면회
-                    </button>
-                </div>
+                <!-- 10개 세부 카테고리 탭 -->
+                <div id="copy-category-tabs" class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1.5 rounded-xl"></div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 space-y-3">
                     <div class="flex justify-between items-center">
@@ -288,30 +346,119 @@
     <div id="modal-container"></div>
 
     <script>
-        let settings = { totalTroops: 100, totalRate: 20, vacationRate: 15 };
+        let settings = {
+            totalTroops: 100,
+            totalRate: 20,
+            vacationRate: 15,
+            periodMode: 'open', // 'open' | 'auto' | 'closed'
+            periodStart: '',
+            periodEnd: ''
+        };
         let adminPassword = localStorage.getItem('chulta_admin_pw') || '1234';
         let leaves = [];
         let isAdmin = false;
         let currentOpenDetailDate = null;
 
-        // 복사 탭 월별 조회 상태
+        // 복사 탭 월별 조회 및 10개 카테고리 상태
         let copyYear = new Date().getFullYear();
         let copyMonth = new Date().getMonth();
         let isCopyAllMonths = false;
-        let currentCategoryTab = 'vacation';
+        let currentCategoryTab = '휴가';
+
+        const SUB_TYPE_OPTIONS = {
+            '외출': ['평일면회외출', '평일전우조외출', '주말면회외출', '주말전우조외출'],
+            '외박': ['신병위로외박', '주말면회외박', '주말전우조외박', '특별외박']
+        };
+
+        const ALL_COPY_CATEGORIES = [
+            '휴가',
+            '신병위로외박',
+            '평일면회외출',
+            '평일전우조외출',
+            '주말면회외출',
+            '주말전우조외출',
+            '주말면회외박',
+            '주말전우조외박',
+            '특별외박',
+            '면회'
+        ];
 
         window.onload = function() {
             initDates();
+            syncSettingsInputs();
+            updatePeriodBannerUI();
             loadDraftForm();
-            document.getElementById('set-troops').value = settings.totalTroops;
-            document.getElementById('set-total-rate').value = settings.totalRate;
-            document.getElementById('set-vacation-rate').value = settings.vacationRate;
         };
 
         function initDates() {
             const today = new Date().toISOString().split('T')[0];
             if (!document.getElementById('start-date').value) document.getElementById('start-date').value = today;
             if (!document.getElementById('end-date').value) document.getElementById('end-date').value = today;
+        }
+
+        function syncSettingsInputs() {
+            const troopsInput = document.getElementById('set-troops');
+            const totalRateInput = document.getElementById('set-total-rate');
+            const vacRateInput = document.getElementById('set-vacation-rate');
+            const modeInput = document.getElementById('set-period-mode');
+            const startInput = document.getElementById('set-period-start');
+            const endInput = document.getElementById('set-period-end');
+
+            if (troopsInput) troopsInput.value = settings.totalTroops;
+            if (totalRateInput) totalRateInput.value = settings.totalRate;
+            if (vacRateInput) vacRateInput.value = settings.vacationRate;
+            if (modeInput) modeInput.value = settings.periodMode || 'open';
+            if (startInput) startInput.value = settings.periodStart || '';
+            if (endInput) endInput.value = settings.periodEnd || '';
+        }
+
+        function isApplicationPeriodOpen() {
+            if (isAdmin) return true;
+            const mode = settings.periodMode || 'open';
+            if (mode === 'open') return true;
+            if (mode === 'closed') return false;
+
+            const now = new Date();
+            const s = settings.periodStart ? new Date(settings.periodStart) : null;
+            const e = settings.periodEnd ? new Date(settings.periodEnd) : null;
+            if (s && now < s) return false;
+            if (e && now > e) return false;
+            return true;
+        }
+
+        function updatePeriodBannerUI() {
+            const dot = document.getElementById('period-status-dot');
+            const text = document.getElementById('period-status-text');
+            const range = document.getElementById('period-range-text');
+            const submitBtn = document.getElementById('submit-leave-btn');
+            if (!dot || !text || !range || !submitBtn) return;
+
+            const open = isApplicationPeriodOpen();
+            const mode = settings.periodMode || 'open';
+
+            if (mode === 'closed' && !isAdmin) {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0';
+                text.textContent = '현재 출타 신청 기간이 마감되었습니다.';
+                range.textContent = '접수 중단';
+            } else if (mode === 'auto') {
+                dot.className = `w-2.5 h-2.5 rounded-full ${open ? 'bg-emerald-500' : 'bg-rose-500'} shrink-0`;
+                text.textContent = open ? '출타 신청 접수 중 (기간 지정)' : '현재 출타 신청 접수 기간이 아닙니다.';
+                range.textContent = `${(settings.periodStart || '미지정').replace('T', ' ')} ~ ${(settings.periodEnd || '미지정').replace('T', ' ')}`;
+            } else {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0';
+                text.textContent = isAdmin ? '출타 신청 접수 중 (관리자 모드)' : '출타 신청 상시 접수 중';
+                range.textContent = '';
+            }
+
+            if (!open) {
+                submitBtn.disabled = true;
+                submitBtn.className = 'w-full bg-slate-300 text-slate-500 font-bold py-3 rounded-xl cursor-not-allowed text-sm';
+                submitBtn.textContent = '현재 출타 신청 기간이 마감되었습니다';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.className = 'w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow text-sm';
+                submitBtn.textContent = '출타 신청서 제출 (실시간 반영)';
+            }
         }
 
         // 입력 폼 내용 실시간 로컬스토리지 저장
@@ -322,10 +469,17 @@
                 rank: document.getElementById('soldier-rank').value,
                 phone: document.getElementById('soldier-phone').value,
                 type: document.getElementById('leave-type').value,
+                subType: document.getElementById('sub-leave-type').value,
                 destination: document.getElementById('destination').value,
                 accommodation: document.getElementById('accommodation').value,
                 startDate: document.getElementById('start-date').value,
                 endDate: document.getElementById('end-date').value,
+                vacationKind: document.getElementById('vacation-kind').value,
+                tmoUse: document.querySelector('input[name="tmo-use"]:checked')?.value || 'N',
+                tmoStartFrom: document.getElementById('tmo-start-from').value,
+                tmoStartTo: document.getElementById('tmo-start-to').value,
+                tmoEndFrom: document.getElementById('tmo-end-from').value,
+                tmoEndTo: document.getElementById('tmo-end-to').value,
                 reason: document.getElementById('leave-reason').value
             };
             localStorage.setItem('chulta_form_draft', JSON.stringify(draft));
@@ -343,12 +497,22 @@
                     if (draft.phone) document.getElementById('soldier-phone').value = draft.phone;
                     if (draft.type) {
                         document.getElementById('leave-type').value = draft.type;
-                        onLeaveTypeChange();
+                        onLeaveTypeChange(draft.subType);
                     }
                     if (draft.destination) document.getElementById('destination').value = draft.destination;
                     if (draft.accommodation) document.getElementById('accommodation').value = draft.accommodation;
                     if (draft.startDate) document.getElementById('start-date').value = draft.startDate;
                     if (draft.endDate) document.getElementById('end-date').value = draft.endDate;
+                    if (draft.vacationKind) document.getElementById('vacation-kind').value = draft.vacationKind;
+                    if (draft.tmoUse) {
+                        const radio = document.querySelector(`input[name="tmo-use"][value="${draft.tmoUse}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                    if (draft.tmoStartFrom) document.getElementById('tmo-start-from').value = draft.tmoStartFrom;
+                    if (draft.tmoStartTo) document.getElementById('tmo-start-to').value = draft.tmoStartTo;
+                    if (draft.tmoEndFrom) document.getElementById('tmo-end-from').value = draft.tmoEndFrom;
+                    if (draft.tmoEndTo) document.getElementById('tmo-end-to').value = draft.tmoEndTo;
+                    toggleTmoRoutes();
                     if (draft.reason) document.getElementById('leave-reason').value = draft.reason;
                 } catch (e) {
                     console.error("임시 저장 데이터 로드 오류", e);
@@ -364,9 +528,8 @@
             return count;
         }
 
-        // Firebase 실시간 동기화 (출타 내역 + 부대 설정값 모두 서버 연동)
+        // Firebase 실시간 동기화
         window.initFirebaseRealtimeSync = function() {
-            // 1. 부대 정원 및 출타율 설정 & 비밀번호 실시간 동기화
             const settingsDocRef = window.doc(window.db, "config", "settings");
             window.onSnapshot(settingsDocRef, (docSnap) => {
                 if (docSnap.exists()) {
@@ -374,18 +537,16 @@
                     if (data.totalTroops !== undefined) settings.totalTroops = data.totalTroops;
                     if (data.totalRate !== undefined) settings.totalRate = data.totalRate;
                     if (data.vacationRate !== undefined) settings.vacationRate = data.vacationRate;
+                    if (data.periodMode !== undefined) settings.periodMode = data.periodMode;
+                    if (data.periodStart !== undefined) settings.periodStart = data.periodStart;
+                    if (data.periodEnd !== undefined) settings.periodEnd = data.periodEnd;
                     if (data.adminPassword !== undefined) {
                         adminPassword = data.adminPassword;
                         localStorage.setItem('chulta_admin_pw', adminPassword);
                     }
 
-                    const troopsInput = document.getElementById('set-troops');
-                    const totalRateInput = document.getElementById('set-total-rate');
-                    const vacRateInput = document.getElementById('set-vacation-rate');
-                    if (troopsInput) troopsInput.value = settings.totalTroops;
-                    if (totalRateInput) totalRateInput.value = settings.totalRate;
-                    if (vacRateInput) vacRateInput.value = settings.vacationRate;
-
+                    syncSettingsInputs();
+                    updatePeriodBannerUI();
                     recalculateCapacities();
                     if (isAdmin) {
                         generateCategoryCopyTexts();
@@ -399,7 +560,6 @@
                 }
             });
 
-            // 2. 출타 신청 내역 실시간 동기화
             const q = query(collection(window.db, "leaves"));
             window.onSnapshot(q, (snapshot) => {
                 leaves = [];
@@ -441,6 +601,7 @@
             if (pw === adminPassword) {
                 isAdmin = true;
                 closeModal();
+                updatePeriodBannerUI();
                 switchToAdminPage();
             } else {
                 alert("비밀번호가 올바르지 않습니다.");
@@ -458,11 +619,13 @@
             `;
 
             switchAdminTab('settings');
+            renderCopyCategoryTabs();
             generateCategoryCopyTexts();
         }
 
         function switchToUserPage() {
             isAdmin = false;
+            updatePeriodBannerUI();
             document.getElementById('admin-page').classList.add('hidden');
             document.getElementById('user-page').classList.remove('hidden');
 
@@ -490,24 +653,32 @@
                 subSettings.classList.add('hidden');
                 subCopy.classList.remove('hidden');
                 updateAdminCopyMonthDisplay();
+                renderCopyCategoryTabs();
                 generateCategoryCopyTexts();
             }
         }
 
-        // 부대 정원 및 출타율 설정 서버 저장
+        // 부대 정원, 신청 기간 및 출타율 설정 서버 저장
         async function saveAdminSettings() {
             settings.totalTroops = parseInt(document.getElementById('set-troops').value) || 100;
             settings.totalRate = parseFloat(document.getElementById('set-total-rate').value) || 20;
             settings.vacationRate = parseFloat(document.getElementById('set-vacation-rate').value) || 15;
-            
+            settings.periodMode = document.getElementById('set-period-mode').value || 'open';
+            settings.periodStart = document.getElementById('set-period-start').value || '';
+            settings.periodEnd = document.getElementById('set-period-end').value || '';
+
             try {
                 await window.setDoc(window.doc(window.db, "config", "settings"), {
                     totalTroops: settings.totalTroops,
                     totalRate: settings.totalRate,
                     vacationRate: settings.vacationRate,
+                    periodMode: settings.periodMode,
+                    periodStart: settings.periodStart,
+                    periodEnd: settings.periodEnd,
                     adminPassword: adminPassword
                 }, { merge: true });
-                
+
+                updatePeriodBannerUI();
                 recalculateCapacities();
                 generateCategoryCopyTexts();
                 alert("설정이 서버에 정상적으로 저장되어 모든 기기에 반영되었습니다.");
@@ -557,26 +728,85 @@
             if (copyMonth > 11) { copyMonth = 0; copyYear++; }
             else if (copyMonth < 0) { copyMonth = 11; copyYear--; }
             updateAdminCopyMonthDisplay();
+            renderCopyCategoryTabs();
             generateCategoryCopyTexts();
         }
 
         function toggleAdminCopyAllMonths() {
             isCopyAllMonths = !isCopyAllMonths;
             updateAdminCopyMonthDisplay();
+            renderCopyCategoryTabs();
             generateCategoryCopyTexts();
+        }
+
+        function getFilteredLeavesForCopy() {
+            let filtered = leaves.filter(l => l.status === '승인');
+            if (!isCopyAllMonths) {
+                const ymPrefix = `${copyYear}-${String(copyMonth + 1).padStart(2, '0')}`;
+                filtered = filtered.filter(l => {
+                    const startYM = l.startDate ? l.startDate.substring(0, 7) : '';
+                    const endYM = l.endDate ? l.endDate.substring(0, 7) : '';
+                    return (startYM <= ymPrefix && endYM >= ymPrefix);
+                });
+            }
+            return filtered;
+        }
+
+        function getLeavesByCategory(baseList, cat) {
+            if (cat === '휴가') return baseList.filter(l => l.type === '휴가');
+            if (cat === '면회') return baseList.filter(l => l.type === '면회');
+            return baseList.filter(l => l.subType === cat);
+        }
+
+        // 동일 신청자 묶음 정렬 (날짜 빠른순 기본 / 이름순)
+        function sortLeavesGrouped(list, sortMode) {
+            const map = new Map();
+            list.forEach(item => {
+                const key = `${item.name || ''}_${item.serial || ''}`;
+                if (!map.has(key)) {
+                    map.set(key, {
+                        name: item.name || '',
+                        items: []
+                    });
+                }
+                map.get(key).items.push(item);
+            });
+
+            const groups = Array.from(map.values());
+            groups.forEach(g => {
+                g.items.sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''));
+                g.earliestDate = g.items[0]?.startDate || '';
+            });
+
+            if (sortMode === 'name_grouped') {
+                groups.sort((a, b) => a.name.localeCompare(b.name, 'ko') || a.earliestDate.localeCompare(b.earliestDate));
+            } else {
+                groups.sort((a, b) => a.earliestDate.localeCompare(b.earliestDate) || a.name.localeCompare(b.name, 'ko'));
+            }
+
+            return groups.flatMap(g => g.items);
+        }
+
+        function renderCopyCategoryTabs() {
+            const wrap = document.getElementById('copy-category-tabs');
+            if (!wrap) return;
+            const baseList = getFilteredLeavesForCopy();
+
+            wrap.innerHTML = ALL_COPY_CATEGORIES.map(cat => {
+                const cnt = getLeavesByCategory(baseList, cat).length;
+                const active = currentCategoryTab === cat;
+                return `
+                    <button type="button" onclick="switchCategoryCopyTab('${cat}')"
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition ${active ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-700 hover:bg-white/60'}">
+                        ${cat} (${cnt})
+                    </button>
+                `;
+            }).join('');
         }
 
         function switchCategoryCopyTab(cat) {
             currentCategoryTab = cat;
-            const tabs = ['vacation', 'outing', 'stay', 'visit'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`cat-tab-${t}`);
-                if (t === cat) {
-                    btn.className = "py-2 rounded-lg text-xs font-bold transition bg-white text-emerald-800 shadow-sm";
-                } else {
-                    btn.className = "py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-                }
-            });
+            renderCopyCategoryTabs();
             generateCategoryCopyTexts();
         }
 
@@ -621,85 +851,59 @@
             return `${s}~${e} (${diffDays}일)`;
         }
 
-        function generateCategoryCopyTexts() {
-            let filtered = leaves.filter(l => l.status === '승인');
-
-            if (!isCopyAllMonths) {
-                const ymPrefix = `${copyYear}-${String(copyMonth + 1).padStart(2, '0')}`;
-                filtered = filtered.filter(l => {
-                    const startYM = l.startDate ? l.startDate.substring(0, 7) : '';
-                    const endYM = l.endDate ? l.endDate.substring(0, 7) : '';
-                    return (startYM <= ymPrefix && endYM >= ymPrefix);
-                });
+        function appendTmoLines(lines, l) {
+            lines.push(`TMO: ${l.tmoUse || 'N'}`);
+            if (l.tmoUse === 'Y') {
+                lines.push(`출발일: ${l.tmoStartFrom || '-'} -> ${l.tmoStartTo || '-'}`);
+                lines.push(`도착일: ${l.tmoEndFrom || '-'} -> ${l.tmoEndTo || '-'}`);
             }
+        }
 
+        function appendReasonIfPresent(lines, l) {
+            if (l.reason && l.reason.trim() !== '') {
+                lines.push(`사유: ${l.reason.trim()}`);
+            }
+        }
+
+        function generateCategoryCopyTexts() {
             const titleElem = document.getElementById('category-copy-title');
             const textareaElem = document.getElementById('category-copy-textarea');
             if (!titleElem || !textareaElem) return;
 
-            let blocks = [];
+            const sortMode = document.getElementById('copy-sort-mode')?.value || 'date_grouped';
+            const baseList = getFilteredLeavesForCopy();
+            const catList = sortLeavesGrouped(getLeavesByCategory(baseList, currentCategoryTab), sortMode);
 
-            if (currentCategoryTab === 'vacation') {
-                titleElem.innerText = "[휴가] 복사 양식";
-                const vLeaves = filtered.filter(l => l.type === '휴가');
-                blocks = vLeaves.map(l => {
-                    return `[휴가]\n${l.rank} ${l.name} ${l.serial}\n휴가일자: ${formatDotDateRange(l.startDate, l.endDate)}\n휴가종류: ${l.reason || ''}\n행선지: ${l.destination || ''}\n연락처: ${l.phone || ''}`;
-                });
-            } else if (currentCategoryTab === 'outing') {
-                titleElem.innerText = "[외출] 복사 양식";
-                const oLeaves = filtered.filter(l => l.type === '외출');
-                blocks = oLeaves.map(l => {
-                    const tag = l.reason ? `[${l.reason}]` : '[외출]';
-                    if (l.buddies && l.buddies.length > 0) {
-                        let lines = [tag];
-                        lines.push(`${l.rank} ${l.name} ${l.serial}`);
-                        l.buddies.forEach(b => lines.push(`${b.rank} ${b.name} ${b.serial}`));
-                        lines.push(`외출일자: ${formatShortDate(l.startDate)}`);
-                        lines.push(`행선지: ${l.destination || ''}`);
-                        lines.push(`${l.name}: ${l.phone || ''}`);
-                        l.buddies.forEach(b => lines.push(`${b.name}: ${b.phone || ''}`));
-                        return lines.join('\n');
-                    } else if (l.visitors && l.visitors.length > 0) {
-                        const v = l.visitors[0];
-                        return `${tag}\n${l.rank} ${l.name} ${l.serial}\n연락처 : ${l.phone || ''}\n외출일자: ${formatShortDate(l.startDate)}\n면회객 : ${v.name || ''}(${v.relation || ''})\n면회객 연락처 : ${v.phone || ''}\n행선지 : ${l.destination || ''}`;
-                    } else {
-                        return `${tag}\n${l.rank} ${l.name} ${l.serial}\n외출일자: ${formatShortDate(l.startDate)}\n행선지: ${l.destination || ''}\n연락처: ${l.phone || ''}`;
-                    }
-                });
-            } else if (currentCategoryTab === 'stay') {
-                titleElem.innerText = "[외박] 복사 양식";
-                const sLeaves = filtered.filter(l => l.type === '외박');
-                blocks = sLeaves.map(l => {
-                    const tag = l.reason ? `[${l.reason}]` : '[외박]';
-                    if (l.buddies && l.buddies.length > 0) {
-                        let lines = [tag];
-                        lines.push(`${l.rank} ${l.name} ${l.serial}`);
-                        l.buddies.forEach(b => lines.push(`${b.rank} ${b.name} ${b.serial}`));
-                        lines.push(`외박일자: ${formatShortDate(l.startDate)} ~ ${formatShortDate(l.endDate)}`);
-                        lines.push(`행선지: ${l.destination || ''}`);
-                        if (l.accommodation) lines.push(`숙소: ${l.accommodation}`);
-                        lines.push(`${l.name}: ${l.phone || ''}`);
-                        l.buddies.forEach(b => lines.push(`${b.name}: ${b.phone || ''}`));
-                        return lines.join('\n');
-                    } else if (l.visitors && l.visitors.length > 0) {
-                        const v = l.visitors[0];
-                        let lines = [tag];
-                        lines.push(`${l.rank} ${l.name} ${l.serial}`);
-                        lines.push(`연락처 : ${l.phone || ''}`);
-                        lines.push(`외박일자: ${formatShortDate(l.startDate)} ~ ${formatShortDate(l.endDate)}`);
-                        lines.push(`면회객 : ${v.name || ''}(${v.relation || ''})`);
-                        lines.push(`면회객 연락처 : ${v.phone || ''}`);
-                        lines.push(`행선지 : ${l.destination || ''}`);
-                        if (l.accommodation) lines.push(`숙소 : ${l.accommodation}`);
-                        return lines.join('\n');
-                    } else {
-                        return `${tag}\n${l.rank} ${l.name} ${l.serial}\n외박일자: ${formatShortDate(l.startDate)} ~ ${formatShortDate(l.endDate)}\n행선지: ${l.destination || ''}\n숙소: ${l.accommodation || ''}\n연락처: ${l.phone || ''}`;
-                    }
-                });
-            } else if (currentCategoryTab === 'visit') {
-                titleElem.innerText = "[면회] 복사 양식";
-                const vLeaves = filtered.filter(l => l.type === '면회');
-                blocks = vLeaves.map(l => {
+            titleElem.innerText = `[${currentCategoryTab}] 복사 양식`;
+
+            const blocks = catList.map(l => {
+                if (currentCategoryTab === '휴가') {
+                    let lines = [
+                        '[휴가]',
+                        `${l.rank} ${l.name} ${l.serial}`,
+                        `휴가일자: ${formatDotDateRange(l.startDate, l.endDate)}`,
+                        `휴가종류: ${l.vacationKind || ''}`,
+                        `행선지: ${l.destination || ''}`,
+                        `연락처: ${l.phone || ''}`
+                    ];
+                    appendTmoLines(lines, l);
+                    return lines.join('\n');
+                }
+
+                if (currentCategoryTab === '신병위로외박') {
+                    // 휴가 양식과 동일하되 휴가종류 줄 제외
+                    let lines = [
+                        '[신병위로외박]',
+                        `${l.rank} ${l.name} ${l.serial}`,
+                        `휴가일자: ${formatDotDateRange(l.startDate, l.endDate)}`,
+                        `행선지: ${l.destination || ''}`,
+                        `연락처: ${l.phone || ''}`
+                    ];
+                    appendTmoLines(lines, l);
+                    return lines.join('\n');
+                }
+
+                if (currentCategoryTab === '면회') {
                     let visitors = l.visitors || [];
                     let visitorLines = visitors.map(v => `${v.name}${v.relation ? '(' + v.relation + ')' : ''}${v.phone ? '(' + v.phone + ')' : ''}`);
                     let birthLines = visitors.map(v => {
@@ -711,8 +915,41 @@
                     let address = visitors.length > 0 ? (visitors.find(v => v.address)?.address || visitors[0].address || '') : '';
 
                     return `[면회]\n${formatSlashDate(l.startDate)}\n면회자: ${l.rank} ${l.name} ${l.serial}\n(${l.phone || ''})\n면회객:\n${visitorLines.join('\n')}\n주소:${address}\n면회객 생년월일:\n${birthLines.join('\n')}`;
-                });
-            }
+                }
+
+                // 외출 및 나머지 외박 (평일/주말 전우조·면회 외출/외박, 특별외박)
+                const isOuting = l.type === '외출';
+                const dateLine = isOuting
+                    ? `외출일자: ${formatShortDate(l.startDate)}`
+                    : `외박일자: ${formatShortDate(l.startDate)} ~ ${formatShortDate(l.endDate)}`;
+
+                let lines = [`[${currentCategoryTab}]`];
+
+                if (currentCategoryTab.includes('전우조')) {
+                    lines.push(`${l.rank} ${l.name} ${l.serial}`);
+                    (l.buddies || []).forEach(b => lines.push(`${b.rank} ${b.name} ${b.serial}`));
+                    lines.push(dateLine);
+                    lines.push(`행선지: ${l.destination || ''}`);
+                    if (!isOuting && l.accommodation) lines.push(`숙소: ${l.accommodation}`);
+                    lines.push(`${l.name}: ${l.phone || ''}`);
+                    (l.buddies || []).forEach(b => lines.push(`${b.name}: ${b.phone || ''}`));
+                } else {
+                    const visitors = l.visitors || [];
+                    const vNames = visitors.map(v => `${v.name || ''}(${v.relation || ''})`).join(', ');
+                    const vPhones = visitors.map(v => v.phone || '').join(', ');
+
+                    lines.push(`${l.rank} ${l.name} ${l.serial}`);
+                    lines.push(`연락처 : ${l.phone || ''}`);
+                    lines.push(dateLine);
+                    lines.push(`면회객 : ${vNames}`);
+                    lines.push(`면회객 연락처 : ${vPhones}`);
+                    lines.push(`행선지 : ${l.destination || ''}`);
+                    if (!isOuting && l.accommodation) lines.push(`숙소 : ${l.accommodation}`);
+                }
+
+                appendReasonIfPresent(lines, l);
+                return lines.join('\n');
+            });
 
             textareaElem.value = blocks.length > 0 ? blocks.join('\n\n') : '';
         }
@@ -725,7 +962,7 @@
                 <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-3 sm:p-4">
                     <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-5 space-y-3.5 shadow-2xl max-h-[92vh] flex flex-col">
                         <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
-                            <h3 id="cal-title" class="text-base sm:text-lg font-bold text-slate-900">2026년 10월 출타 현황</h3>
+                            <h3 id="cal-title" class="text-base sm:text-lg font-bold text-slate-900">2026년 11월 출타 현황</h3>
                             <div class="flex gap-1.5">
                                 <button onclick="changeCalMonth(-1)" class="px-2.5 py-1 border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50"><i class="fa-solid fa-chevron-left"></i> 이전</button>
                                 <button onclick="changeCalMonth(1)" class="px-2.5 py-1 border border-slate-300 rounded-lg text-xs font-bold hover:bg-slate-50">다음 <i class="fa-solid fa-chevron-right"></i></button>
@@ -820,7 +1057,7 @@
                     firebaseId: l.firebaseId,
                     rank: l.rank,
                     name: l.name,
-                    type: l.type,
+                    type: l.subType || l.type,
                     status: l.status,
                     startDate: l.startDate,
                     endDate: l.endDate,
@@ -835,7 +1072,7 @@
                                 firebaseId: l.firebaseId,
                                 rank: b.rank,
                                 name: b.name,
-                                type: l.type,
+                                type: l.subType || l.type,
                                 status: l.status,
                                 startDate: l.startDate,
                                 endDate: l.endDate,
@@ -935,41 +1172,107 @@
             if (sm) sm.remove();
         }
 
-        function onLeaveTypeChange() {
-            saveDraftForm();
+        function handleStartDateChange() {
             const type = document.getElementById('leave-type').value;
+            const startVal = document.getElementById('start-date').value;
+            if ((type === '외출' || type === '면회') && startVal) {
+                document.getElementById('end-date').value = startVal;
+            }
+            saveDraftForm();
+        }
+
+        function toggleTmoRoutes() {
+            const val = document.querySelector('input[name="tmo-use"]:checked')?.value || 'N';
+            const routesEl = document.getElementById('tmo-routes');
+            if (val === 'Y') routesEl.classList.remove('hidden');
+            else routesEl.classList.add('hidden');
+            saveDraftForm();
+        }
+
+        function onLeaveTypeChange(presetSubType) {
+            const type = document.getElementById('leave-type').value;
+            const subTypeContainer = document.getElementById('sub-type-container');
+            const subSelect = document.getElementById('sub-leave-type');
+
+            if (type === '외출' || type === '외박') {
+                subTypeContainer.classList.remove('hidden');
+                subSelect.innerHTML = SUB_TYPE_OPTIONS[type]
+                    .map(st => `<option value="${st}">${st}</option>`)
+                    .join('');
+                if (presetSubType && SUB_TYPE_OPTIONS[type].includes(presetSubType)) {
+                    subSelect.value = presetSubType;
+                }
+            } else {
+                subTypeContainer.classList.add('hidden');
+                subSelect.innerHTML = '';
+            }
+            onSubLeaveTypeChange();
+            saveDraftForm();
+        }
+
+        function onSubLeaveTypeChange() {
+            const type = document.getElementById('leave-type').value;
+            const subType = document.getElementById('sub-leave-type').value;
+
+            const destContainer = document.getElementById('destination-container');
+            const endDateContainer = document.getElementById('end-date-container');
             const reasonContainer = document.getElementById('reason-container');
-            const reasonInput = document.getElementById('leave-reason');
+            const vacKindContainer = document.getElementById('vacation-kind-container');
+            const tmoSection = document.getElementById('tmo-section');
             const outingSubSelector = document.getElementById('outing-sub-selector');
             const buddySection = document.getElementById('buddy-section');
             const visitorSection = document.getElementById('visitor-section');
             const accommodationSection = document.getElementById('accommodation-section');
 
-            reasonContainer.style.display = 'block';
-            reasonInput.placeholder = "";
-            outingSubSelector.style.display = 'none';
-            buddySection.style.display = 'none';
-            visitorSection.style.display = 'none';
-            accommodationSection.style.display = 'none';
+            // 기본 초기화
+            destContainer.classList.remove('hidden');
+            endDateContainer.classList.remove('hidden');
+            reasonContainer.classList.add('hidden');
+            vacKindContainer.classList.add('hidden');
+            tmoSection.classList.add('hidden');
+            outingSubSelector.classList.add('hidden');
+            buddySection.classList.add('hidden');
+            visitorSection.classList.add('hidden');
+            accommodationSection.classList.add('hidden');
             document.getElementById('visitor-list').innerHTML = '';
             document.getElementById('buddy-list').innerHTML = '';
 
             if (type === '휴가') {
-                reasonInput.placeholder = "예: 연가 4일, 구직청원 2일";
-            } else if (type === '외출') {
-                reasonInput.placeholder = "예: 평일 전우조 외출";
-                outingSubSelector.style.display = 'block';
-                toggleOutingSubType();
-            } else if (type === '외박') {
-                reasonInput.placeholder = "예: 주말 면회 외박";
-                accommodationSection.style.display = 'block';
-                outingSubSelector.style.display = 'block';
-                toggleOutingSubType();
+                vacKindContainer.classList.remove('hidden');
+                tmoSection.classList.remove('hidden');
             } else if (type === '면회') {
-                reasonContainer.style.display = 'none';
-                visitorSection.style.display = 'block';
+                destContainer.classList.add('hidden');
+                endDateContainer.classList.add('hidden');
+                visitorSection.classList.remove('hidden');
                 addVisitorField();
+            } else if (type === '외출') {
+                endDateContainer.classList.add('hidden');
+                reasonContainer.classList.remove('hidden');
+                if (subType.includes('전우조')) {
+                    buddySection.classList.remove('hidden');
+                    addBuddyField();
+                } else {
+                    visitorSection.classList.remove('hidden');
+                    addVisitorField();
+                }
+            } else if (type === '외박') {
+                if (subType === '신병위로외박') {
+                    // 휴가 양식과 동일하되 휴가종류 입력란 미표시
+                    tmoSection.classList.remove('hidden');
+                } else {
+                    accommodationSection.classList.remove('hidden');
+                    reasonContainer.classList.remove('hidden');
+                    if (subType.includes('전우조')) {
+                        buddySection.classList.remove('hidden');
+                        addBuddyField();
+                    } else {
+                        // 주말면회외박, 특별외박
+                        visitorSection.classList.remove('hidden');
+                        addVisitorField();
+                    }
+                }
             }
+            handleStartDateChange();
         }
 
         function toggleOutingSubType() {
@@ -978,12 +1281,12 @@
             const visitorSection = document.getElementById('visitor-section');
 
             if (subType === 'buddy') {
-                buddySection.style.display = 'block';
-                visitorSection.style.display = 'none';
+                buddySection.classList.remove('hidden');
+                visitorSection.classList.add('hidden');
                 if (document.getElementById('buddy-list').children.length === 0) addBuddyField();
             } else {
-                buddySection.style.display = 'none';
-                visitorSection.style.display = 'block';
+                buddySection.classList.add('hidden');
+                visitorSection.classList.remove('hidden');
                 if (document.getElementById('visitor-list').children.length === 0) addVisitorField();
             }
         }
@@ -1051,33 +1354,54 @@
 
         async function handleFormSubmit(e) {
             e.preventDefault();
+            if (!isApplicationPeriodOpen()) {
+                alert("현재 출타 신청 기간이 마감되어 제출할 수 없습니다.");
+                return;
+            }
+
             const type = document.getElementById('leave-type').value;
-            
-            // 첫 번째 면회객의 주소를 이후 면회객 데이터에도 공통으로 반영하기 위해 추출
+            const subType = document.getElementById('sub-leave-type').value || '';
+            const startDate = document.getElementById('start-date').value;
+            const endDate = (type === '외출' || type === '면회')
+                ? startDate
+                : document.getElementById('end-date').value;
+
             let sharedAddress = '';
             const firstAddressInput = document.querySelector('.visitor-address');
             if (firstAddressInput) {
                 sharedAddress = firstAddressInput.value.trim();
             }
 
+            const tmoUse = document.querySelector('input[name="tmo-use"]:checked')?.value || 'N';
+
             const newLeave = {
                 id: Date.now(),
-                name: document.getElementById('soldier-name').value,
-                serial: document.getElementById('soldier-serial').value,
+                name: document.getElementById('soldier-name').value.trim(),
+                serial: document.getElementById('soldier-serial').value.trim(),
                 rank: document.getElementById('soldier-rank').value,
-                phone: document.getElementById('soldier-phone').value,
+                phone: document.getElementById('soldier-phone').value.trim(),
                 type: type,
-                destination: document.getElementById('destination').value,
-                accommodation: document.getElementById('accommodation').value,
-                startDate: document.getElementById('start-date').value,
-                endDate: document.getElementById('end-date').value,
-                reason: type === '면회' ? '면회' : document.getElementById('leave-reason').value,
+                subType: subType,
+                destination: type === '면회' ? '' : document.getElementById('destination').value.trim(),
+                accommodation: document.getElementById('accommodation').value.trim(),
+                startDate: startDate,
+                endDate: endDate,
+                vacationKind: document.getElementById('vacation-kind').value.trim(),
+                tmoUse: tmoUse,
+                tmoStartFrom: document.getElementById('tmo-start-from').value.trim(),
+                tmoStartTo: document.getElementById('tmo-start-to').value.trim(),
+                tmoEndFrom: document.getElementById('tmo-end-from').value.trim(),
+                tmoEndTo: document.getElementById('tmo-end-to').value.trim(),
+                reason: type === '면회' ? '면회' : document.getElementById('leave-reason').value.trim(),
                 status: '승인',
                 buddies: [],
                 visitors: []
             };
 
-            if ((type === '외출' || type === '외박') && document.querySelector('input[name="outing-sub-type"]:checked').value === 'buddy') {
+            const usesBuddies = (type === '외출' || type === '외박') && subType.includes('전우조');
+            const usesVisitors = type === '면회' || ((type === '외출' || type === '외박') && !subType.includes('전우조') && subType !== '신병위로외박');
+
+            if (usesBuddies) {
                 document.querySelectorAll('#buddy-list > div').forEach(el => {
                     const bName = el.querySelector('.buddy-name').value.trim();
                     if (bName) {
@@ -1089,7 +1413,7 @@
                         });
                     }
                 });
-            } else {
+            } else if (usesVisitors) {
                 document.querySelectorAll('#visitor-list > div').forEach(el => {
                     const vName = el.querySelector('.visitor-name').value.trim();
                     if (vName) {
@@ -1114,13 +1438,14 @@
                 localStorage.removeItem('chulta_form_draft');
                 document.getElementById('leave-form').reset();
                 initDates();
+                onLeaveTypeChange();
             } catch (error) {
                 console.error("데이터 전송 오류: ", error);
                 alert("신청 중 오류가 발생했습니다.");
             }
         }
 
-        // 출타율 정원 초과 계산 (휴가는 외출/외박에 절대 밀리지 않음, 면회 완전 제외, 그룹별 방식 B 적용)
+        // 출타율 정원 초과 계산
         function recalculateCapacities() {
             leaves.forEach(l => l.status = '승인');
 
